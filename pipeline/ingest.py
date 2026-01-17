@@ -3,8 +3,10 @@
 
 
 import pandas as pd
+import click
 from sqlalchemy import create_engine
 from tqdm.auto import tqdm
+
 
 dtype = {
     "VendorID": "Int64",
@@ -37,20 +39,26 @@ parse_dates = [
 
 
 # In[14]:
-def run():    
+@click.command()
+@click.option('--user', default='root', help='PostgreSQL user')
+@click.option('--password', default='root', help='PostgreSQL password')
+@click.option('--host', default='localhost', help='PostgreSQL host')
+@click.option('--port', default=5432, type=int, help='PostgreSQL port')
+@click.option('--db', default='ny_taxi', help='PostgreSQL database name')
+@click.option('--year', default='2021', type=int, help='Data year')
+@click.option('--month', default='1', type=int, help='Data month')
+@click.option('--chunksize', default='100000', type=int, help='Chunk size for data ingestion')
+@click.option('--table', default='yellow_taxi_data', help='Target table name')
 
-    pg_user = 'root'
-    pg_pass = 'root'
-    pg_host = 'localhost'
-    pg_port = '5432'
-    pg_db   = 'ny_taxi'
+def run(user, password, host, port, db, year, month, chunksize, table):    
+    
+    pg_user = user
+    pg_pass = password
+    pg_host = host
+    pg_port = port
+    pg_db   = db
    
-    year = 2021
-    month = 1
-
-    target_table = 'yellow_taxi_data'
-
-    chunksize = 100000
+    target_table = table
 
     
     prefix = 'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/'
@@ -76,3 +84,19 @@ def run():
 
 if __name__ == '__main__':
     run()   
+
+
+# uv run python ingest.py --user=root --password=root --host=localhost --port=5432 --db=ny_taxi --year=2021 --month=1 --chunksize=100000 --table=yellow_taxi_data
+
+# docker run -it --rm --network=pg-network taxi_ingest:v001 --user=root --password=root --host=pgdatabase --port=5432 -
+# -db=ny_taxi --year=2021 --month=1 --chunksize=100000 --table=yellow_taxi_data
+
+# docker run -it --rm \
+#   -e POSTGRES_USER="root" \
+#   -e POSTGRES_PASSWORD="root" \
+#   -e POSTGRES_DB="ny_taxi" \
+#   -v ny_taxi_postgres_data:/var/lib/postgresql \
+#   -p 5432:5432 \
+#   --network=pg-network \
+#   --name pgdatabase
+#   postgres:18

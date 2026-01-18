@@ -82,6 +82,11 @@ def run(user, password, host, port, db, year, month, chunksize, table):
         df_chunk.to_sql(name=target_table, con=engine, if_exists='append')
         #print(len(df))
 
+    zones_url = 'https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv'
+
+    zones_df = pd.read_csv(zones_url)
+    zones_df.to_sql(name='zones', con=engine, if_exists='replace')
+
 if __name__ == '__main__':
     run()   
 

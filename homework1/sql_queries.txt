@@ -1,0 +1,22 @@
+SELECT COUNT(*) FROM green_taxi_data WHERE 
+lpep_pickup_datetime >= '20251101' AND lpep_pickup_datetime < '20251201'
+AND trip_distance <= 1
+
+SELECT CAST(lpep_pickup_datetime AS DATE) AS pickup_date,
+SUM(trip_distance) AS total_distance
+FROM green_taxi_data 
+WHERE trip_distance < 100
+GROUP BY CAST(lpep_pickup_datetime AS DATE) 
+ORDER BY 2 DESC LIMIT 5;
+
+SELECT "PULocationID", z."Zone", SUM(td.total_amount) FROM green_taxi_data td
+JOIN zones z ON td."PULocationID" = z."LocationID" 
+WHERE CAST(lpep_pickup_datetime AS DATE) = '20251118'
+GROUP BY "PULocationID", z."Zone"
+ORDER BY 3 DESC;
+
+SELECT "PULocationID","DOLocationID", z2."Zone", td.tip_amount FROM green_taxi_data td
+JOIN zones z ON td."PULocationID" = z."LocationID"
+JOIN zones z2 ON td."DOLocationID" = z2."LocationID"
+WHERE lpep_pickup_datetime >= '20251101' AND lpep_pickup_datetime < '20251201' AND "PULocationID" = 74
+ORDER BY 4 DESC;

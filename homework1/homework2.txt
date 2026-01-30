@@ -1,0 +1,9 @@
+SELECT COUNT(*)
+FROM `kestrademo-485701.zoomcamp.yellow_tripdata`
+WHERE tpep_pickup_datetime >= TIMESTAMP('2020-01-01')
+  AND tpep_pickup_datetime <  TIMESTAMP('2021-01-01');
+
+SELECT COUNT(*)
+FROM `kestrademo-485701.zoomcamp.green_tripdata`
+WHERE lpep_pickup_datetime >= TIMESTAMP('2020-01-01')
+  AND lpep_pickup_datetime <  TIMESTAMP('2021-01-01');

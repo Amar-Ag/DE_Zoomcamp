@@ -1,0 +1,7 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "postCreateCommand": "curl -sSL https://sdk.cloud.google.com | bash -s -- --disable-prompts --install-dir=$HOME && echo 'source ~/google-cloud-sdk/path.bash.inc' >> ~/.bashrc",
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}:${containerEnv:HOME}/google-cloud-sdk/bin"
+  }
+}

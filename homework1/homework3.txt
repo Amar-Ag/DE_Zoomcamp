@@ -1,0 +1,50 @@
+-- Creating external table referring to gcs path
+CREATE OR REPLACE EXTERNAL TABLE `kestrademo-485701.zoomcamp.external_yellow_tripdata_2024`
+OPTIONS (
+  format = 'PARQUET',
+  uris = ['gs://aa10-kestra/yellow_tripdata_2024-*.parquet']
+);
+
+-- Check yellow trip data
+SELECT COUNT(*) 
+FROM `kestrademo-485701.zoomcamp.external_yellow_tripdata_2024`;
+-- Q1 Ans : 20332093
+
+-- Create a non partitioned table from external table
+CREATE OR REPLACE TABLE kestrademo-485701.zoomcamp.yellow_tripdata_2024_non_partitioned AS
+SELECT * FROM kestrademo-485701.zoomcamp.external_yellow_tripdata_2024;
+
+-- Q2
+SELECT DISTINCT(PULocationID) FROM kestrademo-485701.zoomcamp.external_yellow_tripdata_2024;  --0B
+SELECT DISTINCT(PULocationID) FROM kestrademo-485701.zoomcamp.yellow_tripdata_2024_non_partitioned; --155.12MB
+
+-- Q3
+SELECT PULocationID FROM kestrademo-485701.zoomcamp.yellow_tripdata_2024_non_partitioned;
+SELECT PULocationID, DOLocationID FROM kestrademo-485701.zoomcamp.yellow_tripdata_2024_non_partitioned;
+
+--BigQuery is a columnar database, and it only scans the specific columns requested in the query. Querying two columns (PULocationID, DOLocationID) requires reading more data than querying one column (PULocationID), leading to a higher estimated number of bytes processed.
+
+-- Q4
+SELECT COUNT(*) FROM kestrademo-485701.zoomcamp.external_yellow_tripdata_2024 WHERE fare_amount = 0; --8333
+
+-- Q5
+--Partition by tpep_dropoff_datetime and Cluster on VendorID
+-- Creating a partition and cluster table
+CREATE OR REPLACE TABLE kestrademo-485701.zoomcamp.yellow_tripdata_2024_partitioned_clustered
+PARTITION BY DATE(tpep_dropoff_datetime)
+CLUSTER BY VendorID AS
+SELECT * FROM kestrademo-485701.zoomcamp.external_yellow_tripdata_2024;
+
+-- Q6
+SELECT DISTINCT(VendorID) FROM kestrademo-485701.zoomcamp.yellow_tripdata_2024_partitioned_clustered 
+WHERE DATE(tpep_dropoff_datetime) BETWEEN '2024-03-01' AND '2024-03-15'; --26.84 MB
+SELECT DISTINCT(VendorID) FROM kestrademo-485701.zoomcamp.yellow_tripdata_2024_non_partitioned 
+WHERE DATE(tpep_dropoff_datetime) BETWEEN '2024-03-01' AND '2024-03-15'; --310.24 MB
+
+-- Q9
+SELECT COUNT(*) FROM kestrademo-485701.zoomcamp.yellow_tripdata_2024_partitioned_clustered -- OB
+--because BigQuery doesn't need to scan any actual column data to count rows — it can get the row count from the table's metadata/partition info alone.
+
+
+
+

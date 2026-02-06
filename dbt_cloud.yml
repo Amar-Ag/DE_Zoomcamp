@@ -1,0 +1,14 @@
+version: "1"
+context:
+  active-host: "kw941.us1.dbt.com"
+  active-project: "70471823549348"
+projects:
+  - project-name: "ny_taxi_"
+    project-id: "70471823549348"
+    account-name: "Self"
+    account-id: "70471823530517"
+    account-host: "kw941.us1.dbt.com"
+    token-name: "cloud-cli-9ad2"
+    token-value: "dbtu_Gjyt79oPy-bX2T9yPcSETfVJ2_yf1cJsLkG1dnI6wXW0G9n1Uo"
+
+

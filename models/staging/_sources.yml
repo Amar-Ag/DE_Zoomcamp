@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: raw_data
+    description: "BQ data sources for NYC taxi rides"
+    database: kestrademo-485701
+    schema: zoomcamp
+    tables:
+      - name: yellow_tripdata
+        description: "Raw NYC yellow trip rides data"
+      - name: green_tripdata
+        description: "Raw NYC green trip rides data"

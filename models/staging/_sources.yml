@@ -10,3 +10,5 @@ sources:
         description: "Raw NYC yellow trip rides data"
       - name: green_tripdata
         description: "Raw NYC green trip rides data"
+      - name: fhv_tripdata_2019_partitioned_clustered
+        description: "FHV data for HW"

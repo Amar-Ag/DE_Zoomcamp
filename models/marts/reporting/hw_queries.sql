@@ -16,3 +16,6 @@
 --  AND revenue_month = '2019-10-01'
 
 -- 386424  
+
+SELECT COUNT(*) as total_rows 
+FROM {{ ref('stg_fhv_tripdata.sql') }}

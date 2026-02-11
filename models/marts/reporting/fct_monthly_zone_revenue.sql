@@ -26,4 +26,5 @@ select
     avg(trip_distance) as avg_monthly_trip_distance
 
 from {{ ref('fct_trips') }}
+where pickup_datetime >= '2019-01-01' and pickup_datetime < '2021-01-01'
 group by pickup_zone, revenue_month, service_type

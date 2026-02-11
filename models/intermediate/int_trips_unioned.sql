@@ -24,6 +24,8 @@ with green_trips as (
         payment_type,
         'Green' as service_type
     from {{ ref('stg_green_tripdata') }}
+    where pickup_datetime >= '2019-01-01' and pickup_datetime < '2021-01-01'
+
 ),
 
 yellow_trips as (
@@ -49,6 +51,8 @@ yellow_trips as (
         payment_type,
         'Yellow' as service_type
     from {{ ref('stg_yellow_tripdata') }}
+    where pickup_datetime >= '2019-01-01' and pickup_datetime < '2021-01-01'
+
 )
 
 select * from green_trips

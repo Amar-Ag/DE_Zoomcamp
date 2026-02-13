@@ -1,59 +1,74 @@
 /* @bruin
 
-# Docs:
-# - SQL assets: https://getbruin.com/docs/bruin/assets/sql
-# - Materialization: https://getbruin.com/docs/bruin/assets/materialization
-# - Quality checks: https://getbruin.com/docs/bruin/quality/available_checks
+name: reports.trips_report
+type: bq.sql
 
-# TODO: Set the asset name (recommended: reports.trips_report).
-name: TODO_SET_ASSET_NAME
-
-# TODO: Set platform type.
-# Docs: https://getbruin.com/docs/bruin/assets/sql
-# suggested type: duckdb.sql
-type: TODO
-
-# TODO: Declare dependency on the staging asset(s) this report reads from.
 depends:
-  - TODO_DEP_STAGING_ASSET
+  - staging.trips
 
-# TODO: Choose materialization strategy.
-# For reports, `time_interval` is a good choice to rebuild only the relevant time window.
-# Important: Use the same `incremental_key` as staging (e.g., pickup_datetime) for consistency.
 materialization:
   type: table
-  # suggested strategy: time_interval
-  strategy: TODO
-  # TODO: set to your report's date column
-  incremental_key: TODO
-  # TODO: set to `date` or `timestamp`
-  time_granularity: TODO
+  strategy: time_interval
+  incremental_key: pickup_date
+  time_granularity: date
 
-# TODO: Define report columns + primary key(s) at your chosen level of aggregation.
 columns:
-  - name: TODO_dim
-    type: TODO
-    description: TODO
+  - name: pickup_date
+    type: date
+    description: Date of trip pickup
     primary_key: true
-  - name: TODO_date
-    type: DATE
-    description: TODO
+  - name: taxi_type
+    type: string
+    description: Type of taxi (yellow or green)
     primary_key: true
-  - name: TODO_metric
-    type: BIGINT
-    description: TODO
+  - name: payment_type_name
+    type: string
+    description: Payment method used
+    primary_key: true
+  - name: total_trips
+    type: integer
+    description: Number of trips
+    checks:
+      - name: non_negative
+  - name: total_passengers
+    type: integer
+    description: Total number of passengers
+    checks:
+      - name: non_negative
+  - name: total_distance_miles
+    type: float64
+    description: Total trip distance in miles
+    checks:
+      - name: non_negative
+  - name: total_revenue
+    type: float64
+    description: Total fare revenue
+    checks:
+      - name: non_negative
+  - name: avg_fare_amount
+    type: float64
+    description: Average fare per trip
+    checks:
+      - name: non_negative
+  - name: avg_trip_distance
+    type: float64
+    description: Average trip distance in miles
     checks:
       - name: non_negative
 
 @bruin */
 
--- Purpose of reports:
--- - Aggregate staging data for dashboards and analytics
--- Required Bruin concepts:
--- - Filter using `{{ start_datetime }}` / `{{ end_datetime }}` for incremental runs
--- - GROUP BY your dimension + date columns
-
-SELECT * -- TODO: replace with your aggregation logic
+SELECT
+    DATE(pickup_datetime)       AS pickup_date,
+    taxi_type,
+    COALESCE(payment_type_name, 'unknown') AS payment_type_name,
+    COUNT(*)                    AS total_trips,
+    SUM(passenger_count)        AS total_passengers,
+    ROUND(SUM(trip_distance), 2) AS total_distance_miles,
+    ROUND(SUM(total_amount), 2) AS total_revenue,
+    ROUND(AVG(fare_amount), 2)  AS avg_fare_amount,
+    ROUND(AVG(trip_distance), 2) AS avg_trip_distance
 FROM staging.trips
 WHERE pickup_datetime >= '{{ start_datetime }}'
   AND pickup_datetime < '{{ end_datetime }}'
+GROUP BY 1, 2, 3

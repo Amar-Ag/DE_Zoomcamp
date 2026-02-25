@@ -3,6 +3,16 @@
     "bruin": {
       "command": "bruin",
       "args": ["mcp"]
+    },
+    "dlt": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--with", "dlt[duckdb]",
+        "--with", "dlt-mcp[search]",
+        "python", "-m", "dlt_mcp"
+      ]
     }
   }
-}
+ }
+

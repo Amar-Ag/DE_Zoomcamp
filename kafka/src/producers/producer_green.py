@@ -40,3 +40,14 @@ t1 = time()
 print(f'took {(t1 - t0):.2f} seconds')
 
 #took 108.81 secs
+
+# docker compose exec postgres psql -U postgres -d postgres -c "SELECT PULocationID, DOLocationID, num_trips, window_start, window_end FROM processed_events_aggregated ORDER BY num_trips DESC LIMIT 5;"
+
+
+# pulocationid | dolocationid | num_trips |    window_start     |     window_end      
+# --------------+--------------+-----------+---------------------+---------------------
+#           129 |          129 |        29 | 2019-10-01 00:05:42 | 2019-10-01 05:23:33
+#            82 |           82 |        14 | 2019-10-01 00:05:42 | 2019-10-01 05:23:33
+#            82 |          129 |        10 | 2019-10-01 00:05:42 | 2019-10-01 05:23:33
+#            82 |          173 |         8 | 2019-10-01 00:05:42 | 2019-10-01 05:23:33
+#           129 |          260 |         8 | 2019-10-01 00:05:42 | 2019-10-01 05:23:33
